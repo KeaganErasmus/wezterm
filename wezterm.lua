@@ -1,7 +1,7 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
 local act = wezterm.action
--- local mux = wezterm.mux
+local mux = wezterm.mux
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 -- local gpus = wezterm.gui.enumerate_gpus()
@@ -15,21 +15,10 @@ config.animation_fps = 1
 config.cursor_blink_rate = 500
 config.term = "xterm-256color" -- Set the terminal type
 
--- config.font = wezterm.font("Iosevka Custom")
 config.font = wezterm.font("Roboto Mono")
--- config.font = wezterm.font("Monocraft Nerd Font")
--- config.font = wezterm.font("FiraCode Nerd Font Mono")
--- config.font = wezterm.font("JetBrains Mono Regular")
+
 config.cell_width = 0.9
--- config.font = wezterm.font("Menlo Regular")
--- config.font = wezterm.font("Hasklig")
--- config.font = wezterm.font("Monoid Retina")
--- config.font = wezterm.font("InputMonoNarrow")
--- config.font = wezterm.font("mononoki Regular")
--- config.font = wezterm.font("Iosevka")
--- config.font = wezterm.font("M+ 1m")
--- config.font = wezterm.font("Hack Regular")
--- config.cell_width = 0.9
+
 config.window_background_opacity = 0.9
 config.prefer_egl = true
 config.font_size = 14.0
@@ -44,7 +33,6 @@ config.window_padding = {
 -- tabs
 -- config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
--- config.tab_bar_at_bottom = true
 
 -- config.inactive_pane_hsb = {
 -- 	saturation = 0.0,
@@ -156,7 +144,6 @@ config.colors = {
 }
 
 config.window_frame = {
-  -- font = wezterm.font({ family = "Iosevka Custom", weight = "Regular" }),
   active_titlebar_bg = "#0c0b0f",
   -- active_titlebar_bg = "#181616",
 }
@@ -173,8 +160,8 @@ config.initial_cols = 80
 -- 	end
 --
 -- 	local tab, pane, window = mux.spawn_window(cmd or {})
--- 	-- window:gui_window():maximize()
--- 	-- window:gui_window():set_position(0, 0)
+-- 	window:gui_window():maximize()
+-- 	window:gui_window():set_position(0, 0)
 -- end)
 
 -- and finally, return the configuration to wezterm
