@@ -15,7 +15,10 @@ config.animation_fps = 1
 config.cursor_blink_rate = 500
 config.term = "xterm-256color" -- Set the terminal type
 
-config.font = wezterm.font("Roboto Mono")
+-- config.font = wezterm.font("Roboto Mono")
+-- config.font = wezterm.font("RandyGG")
+config.font = wezterm.font("randy-gg-bold")
+-- config.font = wezterm.font("randy-gg")
 
 config.cell_width = 0.9
 
@@ -150,7 +153,7 @@ config.window_frame = {
 
 -- config.window_decorations = "INTEGRATED_BUTTONS | RESIZE"
 config.window_decorations = "NONE | RESIZE"
-config.default_prog = { "powershell.exe", "-NoLogo","-ExecutionPolicy", "RemoteSigned" }
+config.default_prog = { "powershell.exe", "-NoLogo", "-ExecutionPolicy", "RemoteSigned" }
 config.initial_cols = 80
 
 -- wezterm.on("gui-startup", function(cmd)
