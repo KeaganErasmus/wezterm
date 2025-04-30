@@ -4,21 +4,14 @@ local act = wezterm.action
 local mux = wezterm.mux
 -- This will hold the configuration.
 local config = wezterm.config_builder()
--- local gpus = wezterm.gui.enumerate_gpus()
--- config.webgpu_preferred_adapter = gpus[1]
--- config.front_end = "WebGpu"
+
 
 config.front_end = "OpenGL"
 config.max_fps = 144
-config.default_cursor_style = "BlinkingBlock"
-config.animation_fps = 1
-config.cursor_blink_rate = 500
+-- config.default_cursor_style = "SteadyBar"
+-- config.animation_fps = 1
+-- config.cursor_blink_rate = 500
 config.term = "xterm-256color" -- Set the terminal type
-
--- config.font = wezterm.font("Roboto Mono")
--- config.font = wezterm.font("RandyGG")
-config.font = wezterm.font("randy-gg-bold")
--- config.font = wezterm.font("randy-gg")
 
 config.cell_width = 0.9
 
@@ -37,13 +30,13 @@ config.window_padding = {
 -- config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
 
--- config.inactive_pane_hsb = {
--- 	saturation = 0.0,
--- 	brightness = 1.0,
--- }
-
--- This is where you actually apply your config choices
---
+-- Font Thingies
+local fonts = {
+  { family = "Roboto Mono", weight = "Bold" },
+  { family = "JetBrains Mono", weight = "Bold" },
+  { family = "RandyGG", weight = "Bold" },
+}
+local current_font_index = 1
 
 -- keymaps
 config.keys = {
@@ -52,14 +45,6 @@ config.keys = {
     mods = "CTRL|SHIFT|ALT",
     action = wezterm.action.SplitPane({
       direction = "Right",
-      size = { Percent = 50 },
-    }),
-  },
-  {
-    key = "v",
-    mods = "CTRL|SHIFT|ALT",
-    action = wezterm.action.SplitPane({
-      direction = "Down",
       size = { Percent = 50 },
     }),
   },
@@ -83,8 +68,8 @@ config.keys = {
     mods = "CTRL|SHIFT",
     action = act.AdjustPaneSize({ "Right", 5 }),
   },
-  { key = "9", mods = "CTRL", action = act.PaneSelect },
-  { key = "L", mods = "CTRL", action = act.ShowDebugOverlay },
+  { key = "g", mods = "CTRL", action = act.PaneSelect },
+  -- { key = "L", mods = "CTRL", action = act.ShowDebugOverlay },
   {
     key = "O",
     mods = "CTRL|ALT",
@@ -99,47 +84,55 @@ config.keys = {
       window:set_config_overrides(overrides)
     end),
   },
+  {
+    key = "F",
+    mods = "CTRL|ALT",
+    action = wezterm.action_callback(function(window, _)
+      local overrides = window:get_config_overrides() or {}
+
+      -- Cycle to the next font
+      current_font_index = current_font_index + 1
+      if current_font_index > #fonts then
+	current_font_index = 1
+      end
+
+      local font = fonts[current_font_index]
+      overrides.font = wezterm.font({
+	family = font.family,
+	weight = font.weight,
+      })
+
+      window:set_config_overrides(overrides)
+      window:toast_notification("Font Switched", font.family .. " (" .. font.weight .. ")", nil, 4000)
+    end),
+  },
 }
 
 -- For example, changing the color scheme:
 -- config.color_scheme = "Cloud (terminal.sexy)"
 config.colors = {
-  -- background = '#3b224c',
-  -- background = "#181616", -- vague.nvim bg
-  -- background = "#080808", -- almost black
-  background = "#0c0b0f", -- dark purple
-  -- background = "#020202", -- dark purple
-  -- background = "#17151c", -- brighter purple
-  -- background = "#16141a",
-  -- background = "#0e0e12", -- bright washed lavendar
-  -- background = 'rgba(59, 34, 76, 100%)',
+  background = "#181818",
   cursor_border = "#bea3c7",
-  -- cursor_fg = "#281733",
   cursor_bg = "#bea3c7",
-  -- selection_fg = '#281733',
 
   tab_bar = {
-    background = "#0c0b0f",
-    -- background = "rgba(0, 0, 0, 0%)",
+    background = "#181818",
     active_tab = {
       bg_color = "#0c0b0f",
       fg_color = "#bea3c7",
       intensity = "Normal",
-      underline = "None",
       italic = false,
-      strikethrough = false,
     },
     inactive_tab = {
       bg_color = "#0c0b0f",
       fg_color = "#f8f2f5",
       intensity = "Normal",
       underline = "None",
-      italic = false,
+      italic = true,
       strikethrough = false,
     },
 
     new_tab = {
-      -- bg_color = "rgba(59, 34, 76, 50%)",
       bg_color = "#0c0b0f",
       fg_color = "white",
     },
@@ -148,24 +141,17 @@ config.colors = {
 
 config.window_frame = {
   active_titlebar_bg = "#0c0b0f",
-  -- active_titlebar_bg = "#181616",
 }
 
--- config.window_decorations = "INTEGRATED_BUTTONS | RESIZE"
-config.window_decorations = "NONE | RESIZE"
-config.default_prog = { "powershell.exe", "-NoLogo", "-ExecutionPolicy", "RemoteSigned" }
-config.initial_cols = 80
+local is_linux = function()
+	return wezterm.target_triple:find("linux") ~= nil
+end
 
--- wezterm.on("gui-startup", function(cmd)
--- 	local args = {}
--- 	if cmd then
--- 		args = cmd.args
--- 	end
---
--- 	local tab, pane, window = mux.spawn_window(cmd or {})
--- 	window:gui_window():maximize()
--- 	window:gui_window():set_position(0, 0)
--- end)
+config.window_decorations = "NONE | RESIZE"
+if not is_linux() then
+  config.default_prog = { "powershell.exe", "-NoLogo", "-ExecutionPolicy", "RemoteSigned" }
+end
+config.initial_cols = 80
 
 -- and finally, return the configuration to wezterm
 return config
